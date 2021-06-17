@@ -2,14 +2,14 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: conjur2
+  name: conjur
 
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: conjur-cluster
-  namespace: conjur2
+  namespace: conjur
 # automountServiceAccountToken: false
 
 ---
@@ -39,7 +39,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: conjur-cluster
-  namespace: conjur2
+  namespace: conjur
 roleRef:
   kind: ClusterRole
   name: conjur-authenticator
@@ -50,15 +50,15 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: conjur-ssl-certificate
-  namespace: conjur2
+  namespace: conjur
 data:
-  ssl-certificate: -----BEGIN CERTIFICATE-----\nMIIDVzCCAj+gAwIBAgIUcZDmj+9nSCjH+CsltAtLBwxJRGMwDQYJKoZIhvcNAQEL\nBQAwQzENMAsGA1UECgwEY3licjESMBAGA1UECwwJQ29uanVyIENBMR4wHAYDVQQD\nDBVsZWFkZXIuY29uanVyLWdjcC5jb20wHhcNMjEwNjE1MTIzNDQ3WhcNMzEwNjEz\nMTIzNDQ3WjAgMR4wHAYDVQQDDBVsZWFkZXIuY29uanVyLWdjcC5jb20wggEiMA0G\nCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDPn5qbXXv20gipgN0ysVQPWjO0ph0Y\nIEReO934fYPdu8r6Yt8oCjCQUTzEbz+k0VRcyDLNy6yj8hZipNNIOtJP6pNjyvCf\nBMI0lLRvJ4qF3Q4koNGAB6+344E7eCSMQdjpu4KSA849fS6lcB1xJOv0P3iz2FXk\nBoSrFHSXWGXOkjTzvuAEc/HvyN3OEuBi0LI3vtM0LonAMvnWzZEpiCvPZLsZ2nND\nlRusdgw2R6xr6biVQyM+23NQ3RUMyKSEpvo1x6Fet4M+xsz3AnQvRrcr8bpccr1W\nXB/GsQ5egQK3uX8gIUWHkxHsOc+7w8kunWnbAbVu7R26Rwqw9M7suqMFAgMBAAGj\nZjBkMA4GA1UdDwEB/wQEAwIFoDAdBgNVHQ4EFgQU2jmj7l5rSw0yVb/vlWAYkK/Y\nBwkwMwYDVR0RBCwwKoIVbGVhZGVyLmNvbmp1ci1nY3AuY29tgglsb2NhbGhvc3SC\nBmNvbmp1cjANBgkqhkiG9w0BAQsFAAOCAQEAc7xsOSrpKmszbhaA6s0Bo2ltKfgn\n6dwIBhreRAmSimhSTUnzRJfDeqr+kU1Gf52bB2ZLg+qyRM65o3GUoUxXq6Q0BhRZ\ntt0eKfr+9ukQ43PrNmTtY+AVy8nDdbBEpo8hRfbGDR9rFUmMx6nCZjKdHaYCWUiQ\nL4N9grh9aGHFXhVLWFb6t1XCgxiDpConG3fuooO5lmIwg3igUMLj7Q1e1B5syThy\neqQ8UR+79IjkUmLWB3P/cvnfHmot8AaXqweHfmPywxpbsxfbsyH38RJC4u1LeYZV\no0H35rCnllUexw28mD5Mjm8kL11ElHDdaRfxNekcK7ONfPPie5jAT41dmA==\n-----END CERTIFICATE-----\n-----BEGIN CERTIFICATE-----\nMIIDnTCCAoWgAwIBAgIJAKTpwxjia4XUMA0GCSqGSIb3DQEBCwUAMEMxDTALBgNV\nBAoMBGN5YnIxEjAQBgNVBAsMCUNvbmp1ciBDQTEeMBwGA1UEAwwVbGVhZGVyLmNv\nbmp1ci1nY3AuY29tMB4XDTIxMDYxNTEyMzQ0MloXDTMxMDYxMzEyMzQ0MlowQzEN\nMAsGA1UECgwEY3licjESMBAGA1UECwwJQ29uanVyIENBMR4wHAYDVQQDDBVsZWFk\nZXIuY29uanVyLWdjcC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIB\nAQDabjk2q8gfsMnGXo6zov3CZShooJeYF+LhFvcPmvRZF6nVMrv0OQDHXBgw6RB/\nm0YhtG6FoUra/b/IwqlyEFhtgx3hMBmN+L19Tayoq16tDGowTPpRbFhtlCiGCYo2\n/qwrxSypoLFCZjFNKE+ly0fanpFrirU3/ziebg4BEVgEX18+g7H7iBCJw1K5Ik3x\nEYvlZN4e3msuzTQbUVlzC6vimModWDZqBlHq4PbgE1hUByYn/Nj4iTPrbv9ToElk\n/BIFD297A3uUyVA5Z6cihgsX9UUvXgEc5hrK9DsxYh3bV2GbZVlWQF+exjbL8t/q\nVqFkBwKK5jF4+FHYaA4+H4Q5AgMBAAGjgZMwgZAwMwYDVR0RBCwwKoIVbGVhZGVy\nLmNvbmp1ci1nY3AuY29tgglsb2NhbGhvc3SCBmNvbmp1cjAdBgNVHQ4EFgQU7Ewa\nnnm5LrYMbJ9N4VmuxjWbXiIwHwYDVR0jBBgwFoAU7Ewannm5LrYMbJ9N4VmuxjWb\nXiIwDAYDVR0TBAUwAwEB/zALBgNVHQ8EBAMCAeYwDQYJKoZIhvcNAQELBQADggEB\nAKzjhJ+XGYsoMpKXqp3l6BtyFA5tIP0FwuXDhPxJGD1cKLT98JTGcnsOYK0VuDCh\nAhW2YSjjZxN3kOanVl8iXBHteUKXl1+I6kiQmXKNCiNMrbVOHI2z5gC1YFs60EL0\nXrhqm3kvrWMDD1g2bBH6xjWWLCvJpqAJ/Ze3Ba+kxkFHfXsO+6tGgnR3lPeSROsm\nmaKbh9W5WyRbqYnDJBoUTt4bTuM12GVR70BR2zWd4pGu9CQhTWo5OafzldJ3FGLN\nev7J+0vW+GxTRx2Xe9zCjKCOVIRxSbkIAoZjHnwH1VQ51kvNvp6tA7pLZN6C0Roh\np7GvtrDXaYFyudm9hX9F6co=\n-----END CERTIFICATE-----
+  ssl-certificate: 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: conjur-access
-  namespace: conjur2
+  namespace: conjur
   labels:
     app: cyberark
 spec:
@@ -76,7 +76,7 @@ spec:
       volumes:
       - name: follower-bootstrap
         secret:
-          secretName: follower-seedfile
+          secretName: follower-bootstrap
           items:
           - key: FOLLOWER_START_SCRIPT
             path: start-follower.sh
@@ -87,7 +87,7 @@ spec:
       containers:
       - name: node
         imagePullPolicy: IfNotPresent
-        image: captainfluffytoes/csme:12.0.0
+        image: [repo/image]
         command: ["/tmp/seedfile/start-follower.sh"]
         env:
           - name: CONJUR_AUTHENTICATORS
@@ -129,7 +129,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: access
-  namespace: conjur2
+  namespace: conjur
 spec:
   ports:
   - name: https
