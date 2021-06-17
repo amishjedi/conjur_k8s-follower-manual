@@ -1,0 +1,140 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: conjur2
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: conjur-cluster
+  namespace: conjur2
+# automountServiceAccountToken: false
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: conjur-authenticator
+rules:
+- apiGroups: [""]
+  resources: ["pods", "serviceaccounts"]
+  verbs: ["get", "list"]
+- apiGroups: ["extensions"]
+  resources: [ "deployments", "replicasets"]
+  verbs: ["get", "list"]
+- apiGroups: ["apps"]
+  resources: [ "deployments", "statefulsets", "replicasets"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create", "get"]
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: conjur-authenticator
+subjects:
+- kind: ServiceAccount
+  name: conjur-cluster
+  namespace: conjur2
+roleRef:
+  kind: ClusterRole
+  name: conjur-authenticator
+  apiGroup: rbac.authorization.k8s.io
+
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: conjur-ssl-certificate
+  namespace: conjur2
+data:
+  ssl-certificate: -----BEGIN CERTIFICATE-----\nMIIDVzCCAj+gAwIBAgIUcZDmj+9nSCjH+CsltAtLBwxJRGMwDQYJKoZIhvcNAQEL\nBQAwQzENMAsGA1UECgwEY3licjESMBAGA1UECwwJQ29uanVyIENBMR4wHAYDVQQD\nDBVsZWFkZXIuY29uanVyLWdjcC5jb20wHhcNMjEwNjE1MTIzNDQ3WhcNMzEwNjEz\nMTIzNDQ3WjAgMR4wHAYDVQQDDBVsZWFkZXIuY29uanVyLWdjcC5jb20wggEiMA0G\nCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDPn5qbXXv20gipgN0ysVQPWjO0ph0Y\nIEReO934fYPdu8r6Yt8oCjCQUTzEbz+k0VRcyDLNy6yj8hZipNNIOtJP6pNjyvCf\nBMI0lLRvJ4qF3Q4koNGAB6+344E7eCSMQdjpu4KSA849fS6lcB1xJOv0P3iz2FXk\nBoSrFHSXWGXOkjTzvuAEc/HvyN3OEuBi0LI3vtM0LonAMvnWzZEpiCvPZLsZ2nND\nlRusdgw2R6xr6biVQyM+23NQ3RUMyKSEpvo1x6Fet4M+xsz3AnQvRrcr8bpccr1W\nXB/GsQ5egQK3uX8gIUWHkxHsOc+7w8kunWnbAbVu7R26Rwqw9M7suqMFAgMBAAGj\nZjBkMA4GA1UdDwEB/wQEAwIFoDAdBgNVHQ4EFgQU2jmj7l5rSw0yVb/vlWAYkK/Y\nBwkwMwYDVR0RBCwwKoIVbGVhZGVyLmNvbmp1ci1nY3AuY29tgglsb2NhbGhvc3SC\nBmNvbmp1cjANBgkqhkiG9w0BAQsFAAOCAQEAc7xsOSrpKmszbhaA6s0Bo2ltKfgn\n6dwIBhreRAmSimhSTUnzRJfDeqr+kU1Gf52bB2ZLg+qyRM65o3GUoUxXq6Q0BhRZ\ntt0eKfr+9ukQ43PrNmTtY+AVy8nDdbBEpo8hRfbGDR9rFUmMx6nCZjKdHaYCWUiQ\nL4N9grh9aGHFXhVLWFb6t1XCgxiDpConG3fuooO5lmIwg3igUMLj7Q1e1B5syThy\neqQ8UR+79IjkUmLWB3P/cvnfHmot8AaXqweHfmPywxpbsxfbsyH38RJC4u1LeYZV\no0H35rCnllUexw28mD5Mjm8kL11ElHDdaRfxNekcK7ONfPPie5jAT41dmA==\n-----END CERTIFICATE-----\n-----BEGIN CERTIFICATE-----\nMIIDnTCCAoWgAwIBAgIJAKTpwxjia4XUMA0GCSqGSIb3DQEBCwUAMEMxDTALBgNV\nBAoMBGN5YnIxEjAQBgNVBAsMCUNvbmp1ciBDQTEeMBwGA1UEAwwVbGVhZGVyLmNv\nbmp1ci1nY3AuY29tMB4XDTIxMDYxNTEyMzQ0MloXDTMxMDYxMzEyMzQ0MlowQzEN\nMAsGA1UECgwEY3licjESMBAGA1UECwwJQ29uanVyIENBMR4wHAYDVQQDDBVsZWFk\nZXIuY29uanVyLWdjcC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIB\nAQDabjk2q8gfsMnGXo6zov3CZShooJeYF+LhFvcPmvRZF6nVMrv0OQDHXBgw6RB/\nm0YhtG6FoUra/b/IwqlyEFhtgx3hMBmN+L19Tayoq16tDGowTPpRbFhtlCiGCYo2\n/qwrxSypoLFCZjFNKE+ly0fanpFrirU3/ziebg4BEVgEX18+g7H7iBCJw1K5Ik3x\nEYvlZN4e3msuzTQbUVlzC6vimModWDZqBlHq4PbgE1hUByYn/Nj4iTPrbv9ToElk\n/BIFD297A3uUyVA5Z6cihgsX9UUvXgEc5hrK9DsxYh3bV2GbZVlWQF+exjbL8t/q\nVqFkBwKK5jF4+FHYaA4+H4Q5AgMBAAGjgZMwgZAwMwYDVR0RBCwwKoIVbGVhZGVy\nLmNvbmp1ci1nY3AuY29tgglsb2NhbGhvc3SCBmNvbmp1cjAdBgNVHQ4EFgQU7Ewa\nnnm5LrYMbJ9N4VmuxjWbXiIwHwYDVR0jBBgwFoAU7Ewannm5LrYMbJ9N4VmuxjWb\nXiIwDAYDVR0TBAUwAwEB/zALBgNVHQ8EBAMCAeYwDQYJKoZIhvcNAQELBQADggEB\nAKzjhJ+XGYsoMpKXqp3l6BtyFA5tIP0FwuXDhPxJGD1cKLT98JTGcnsOYK0VuDCh\nAhW2YSjjZxN3kOanVl8iXBHteUKXl1+I6kiQmXKNCiNMrbVOHI2z5gC1YFs60EL0\nXrhqm3kvrWMDD1g2bBH6xjWWLCvJpqAJ/Ze3Ba+kxkFHfXsO+6tGgnR3lPeSROsm\nmaKbh9W5WyRbqYnDJBoUTt4bTuM12GVR70BR2zWd4pGu9CQhTWo5OafzldJ3FGLN\nev7J+0vW+GxTRx2Xe9zCjKCOVIRxSbkIAoZjHnwH1VQ51kvNvp6tA7pLZN6C0Roh\np7GvtrDXaYFyudm9hX9F6co=\n-----END CERTIFICATE-----
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conjur-access
+  namespace: conjur2
+  labels:
+    app: cyberark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: access
+  template:
+    metadata:
+      labels:
+        role: access
+    spec:
+      serviceAccountName: conjur-cluster
+      automountServiceAccountToken: false
+      volumes:
+      - name: follower-bootstrap
+        secret:
+          secretName: follower-seedfile
+          items:
+          - key: FOLLOWER_START_SCRIPT
+            path: start-follower.sh
+            mode: 511
+          - key: FOLLOWER_SEED_FILE
+            path: follower-seed.tar
+            mode: 420
+      containers:
+      - name: node
+        imagePullPolicy: IfNotPresent
+        image: captainfluffytoes/csme:12.0.0
+        command: ["/tmp/seedfile/start-follower.sh"]
+        env:
+          - name: CONJUR_AUTHENTICATORS
+            value: "authn-k8s/prod"
+          - name: SEEDFILE_DIR
+            value: /tmp/seedfile
+          - name: KUBERNETES_SERVICE_HOST
+            value: ""
+          - name: KUBERNETES_SERVICE_PORT_HTTPS
+            value: ""
+        ports:
+          - containerPort: 443
+            protocol: TCP
+          - containerPort: 5432
+            protocol: TCP
+          - containerPort: 1999
+            protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 443
+            scheme: HTTPS
+          initialDelaySeconds: 15
+          timeoutSeconds: 5
+        volumeMounts:
+          - name: follower-bootstrap
+            mountPath: /tmp/seedfile
+            readOnly: true
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: access
+  namespace: conjur2
+spec:
+  ports:
+  - name: https
+    port: 443
+    targetPort: 443
+  selector:
+    role: access
+  type: ClusterIP
