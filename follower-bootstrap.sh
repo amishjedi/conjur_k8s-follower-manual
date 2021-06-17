@@ -3,7 +3,7 @@ cat << EOL | kubectl -n conjur2 apply -f -
 apiVersion: v1
 kind: Secret
 metadata:
-  name: "follower-seedfile"
+  name: "follower-bootstrap"
 data:
   FOLLOWER_SEED_FILE: |
 $(base64 -i "follower_seed.tar" | awk '{ print "    " $0 }')
